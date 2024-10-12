@@ -1,7 +1,7 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cx } from "~/util/cx";
-import { cva, VariantProps } from "class-variance-authority";
-import { Children, cloneElement, ComponentProps, forwardRef, isValidElement, ReactNode } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { Children, cloneElement, forwardRef, isValidElement, type ComponentProps } from "react";
 import invariant from "tiny-invariant";
 
 const buttonVariants = cva(
@@ -10,9 +10,9 @@ const buttonVariants = cva(
 		variants: {
 			appearance: {
 				filled:
-					"bg-workos-purple-9 border-workos-purple-a3 text-white focus-visible:ring-workos-purple-9/20 hover:bg-workos-purple-10 active:bg-workos-purple-10 active:saturate-[1.1] active:brightness-[0.92]",
+					"bg-workos-purple-9 border-workos-purple-a3 text-white ring-workos-purple-9/20 hover:bg-workos-purple-10 active:bg-workos-purple-10 active:saturate-[1.1] active:brightness-[0.92]",
 				outlined:
-					"bg-white border-workos-gray-7 disabled:bg-workos-gray-a3 disabled:border-workos-gray-a3 disabled:text-workos-gray-a8 focus-visible:ring-workos-purple-9/20",
+					"bg-white border-workos-gray-7 disabled:bg-workos-gray-a3 disabled:border-workos-gray-a3 disabled:text-workos-gray-a8 ring-workos-purple-9/20",
 			},
 			priority: {
 				danger: "",

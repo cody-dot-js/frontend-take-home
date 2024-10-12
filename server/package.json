@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "tsx src/api.ts",
+		"serve": "tsx src/api.ts",
     "test": "tsx src/api.test.ts",
     "lint": "eslint ."
   },

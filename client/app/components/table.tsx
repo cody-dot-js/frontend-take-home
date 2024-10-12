@@ -45,7 +45,7 @@ const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(
 		<tr
 			ref={ref}
 			className={cx(
-				"data-state-selected:bg-gray-200 border-workos-gray-11 border-b",
+				"data-state-selected:bg-gray-200 border-workos-gray-11 border-b text-sm",
 				!withoutHover && "hover:bg-gray-200/10",
 				className,
 			)}
@@ -64,7 +64,7 @@ TableHead.displayName = "TableHead";
 
 const TableCell = forwardRef<HTMLTableCellElement, TdHTMLAttributes<HTMLTableCellElement>>(
 	({ className, ...props }, ref) => (
-		<td ref={ref} className={cx("min-h-11 px-3 py-2.5 align-middle font-normal", className)} {...props} />
+		<td ref={ref} className={cx("min-h-11 px-3 py-2.5 align-middle text-sm font-normal", className)} {...props} />
 	),
 );
 TableCell.displayName = "TableCell";

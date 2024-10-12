@@ -1,6 +1,7 @@
-import { ClientLoaderFunctionArgs, Outlet, redirect } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { Outlet, redirect } from "@remix-run/react";
 
-export const clientLoader = ({ request }: ClientLoaderFunctionArgs) => {
+export const loader = ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);
 
 	// if we're at the root of the app, redirect to the users tab by default
@@ -8,7 +9,6 @@ export const clientLoader = ({ request }: ClientLoaderFunctionArgs) => {
 		throw redirect("/users");
 	}
 };
-clientLoader.hydrate = true;
 
 export default function Component() {
 	return <Outlet />;
