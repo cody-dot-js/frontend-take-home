@@ -1,6 +1,6 @@
 import { MagnifyingGlass } from "@phosphor-icons/react/MagnifyingGlass";
 import { Plus } from "@phosphor-icons/react/Plus";
-import { MetaFunction } from "@remix-run/react";
+import type { MetaFunction } from "@remix-run/react";
 import { Button } from "~/components/button";
 import { Input, InputIcon } from "~/components/input";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/table";

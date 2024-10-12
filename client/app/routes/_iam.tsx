@@ -1,13 +1,13 @@
-import { ClientLoaderFunctionArgs, json, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
+import type { LoaderFunctionArgs } from "@remix-run/node";
+import { json, Outlet, useLoaderData, useNavigate } from "@remix-run/react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/tabs";
 
-export const clientLoader = ({ request }: ClientLoaderFunctionArgs) => {
+export const loader = ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);
 	const firstSegment = url.pathname.split("/")[1];
 	const defaultTab = isTab(firstSegment) ? firstSegment : $tab("users");
 	return json({ defaultTab });
 };
-clientLoader.hydrate = true;
 
 const tabs = ["users", "roles"] as const;
 type Tab = (typeof tabs)[number];
@@ -15,7 +15,7 @@ const $tab = <T extends Tab = Tab>(value: T) => value;
 const isTab = (value: unknown): value is Tab => tabs.includes(value as Tab);
 
 export default function Index() {
-	const { defaultTab } = useLoaderData<typeof clientLoader>();
+	const { defaultTab } = useLoaderData<typeof loader>();
 	const navigate = useNavigate();
 
 	return (

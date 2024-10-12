@@ -1,25 +1,37 @@
 {
   "include": ["env.d.ts", "**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
-    "types": ["@remix-run/node", "vite/client"],
-    "isolatedModules": true,
+		/* Base Options: */
     "esModuleInterop": true,
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "resolveJsonModule": true,
-    "target": "ES2022",
-    "strict": true,
-    "allowJs": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "target": "ES2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "jsx": "react-jsx",
+		"resolvePackageJsonExports": true,
+
+		/* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+		"noUncheckedSideEffectImports": true,
+
+    /* If NOT transpiling with TypeScript: */
+    "module": "preserve",
+		"moduleResolution": "Bundler",
+    "noEmit": true,
+		"incremental": true,
+
+		/* If your code runs in the DOM: */
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+
     "baseUrl": ".",
+    "types": ["@remix-run/node", "vite/client"],
     "paths": {
       "~/*": ["./app/*"]
     },
-
-    // Remix takes care of building everything in `remix build`.
-    "noEmit": true
   }
 }

@@ -17,7 +17,7 @@ export const links: LinksFunction = () => [
 
 export function Layout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="en-US" dir="ltr" className="h-full">
+		<html lang="en-US" dir="ltr" className="h-screen min-h-full bg-white">
 			<head>
 				<meta charSet="utf-8" />
 				<meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -25,7 +25,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className="h-full min-h-full overflow-y-scroll bg-white">
+			<body className="h-full min-h-full overflow-y-scroll bg-white text-sm">
 				{children}
 				<ScrollRestoration />
 				<Scripts />
@@ -36,8 +36,4 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
 	return <Outlet />;
-}
-
-export function HydrateFallback() {
-	return <p>Loading...</p>;
 }

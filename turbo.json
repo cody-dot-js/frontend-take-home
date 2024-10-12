@@ -17,7 +17,7 @@
 		},
 		"serve": {
 			"dependsOn": ["^build"],
-      "outputs": ["public/build/**"]
+      "outputs": ["public/build/**", "build/**", ".vercel/**", "dist/**"]
 		},
 		"start": {
 			"dependsOn": ["^build"],

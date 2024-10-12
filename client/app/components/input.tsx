@@ -1,5 +1,5 @@
 import { cx } from "~/util/cx";
-import { ComponentProps, forwardRef } from "react";
+import { forwardRef, type ComponentProps } from "react";
 
 /**
  * A wrapper around the native `input` element. For saving time, it will only support the "md" size, ignoring disabled visual states.
