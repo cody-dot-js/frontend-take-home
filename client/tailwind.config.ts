@@ -47,6 +47,10 @@ export default {
 					'"Noto Color Emoji"',
 				],
 			},
+			boxShadow: {
+				"workos-shadow-1":
+					"0px 1.5px 2px 0px rgba(5, 5, 88, 0.024) inset, 0px 1.5px 2px 0px rgba(0, 0, 0, 0.024) inset",
+			},
 			colors: {
 				workos: {
 					neutral: {
@@ -59,7 +63,9 @@ export default {
 						11: "#dddde3",
 						12: "hsla(210, 16%, 20%, 1)",
 						a3: "hsla(240, 100%, 12%, 0.05)",
+						a5: "hsla(240, 100%, 9%, 0.11)",
 						a8: "hsla(230, 100%, 9%, 0.28)",
+						a9: "hsla(232, 100%, 6%, 0.46)",
 						a11: "hsla(218, 100%, 4%, 0.62)",
 					},
 					purple: {

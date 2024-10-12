@@ -1,6 +1,8 @@
+import { MagnifyingGlass } from "@phosphor-icons/react/MagnifyingGlass";
 import { Plus } from "@phosphor-icons/react/Plus";
 import type { MetaFunction } from "@remix-run/node";
 import { Button } from "~/components/button";
+import { Input, InputIcon } from "~/components/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/tabs";
 
 export const meta: MetaFunction = () => {
@@ -42,6 +44,12 @@ export default function Index() {
 					<Button type="button" appearance="outlined" priority="default" size="sm" asChild>
 						<a href="#">Next</a>
 					</Button>
+					<div className="relative">
+						<InputIcon>
+							<MagnifyingGlass className="size-4" />
+						</InputIcon>
+						<Input className="pl-8" type="text" placeholder="Search by name..." />
+					</div>
 				</TabsContent>
 				<TabsContent value={$tab("roles")}>Roles content</TabsContent>
 			</Tabs>

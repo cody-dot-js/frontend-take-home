@@ -9,9 +9,9 @@ const buttonVariants = cva(
 	{
 		variants: {
 			appearance: {
-				filled: "bg-workos-purple-9 border-workos-purple-a3 text-white focus-visible:ring-workos-purple-9/50",
+				filled: "bg-workos-purple-9 border-workos-purple-a3 text-white focus-visible:ring-workos-purple-9/20",
 				outlined:
-					"bg-white border-workos-gray-7 disabled:bg-workos-gray-a3 disabled:border-workos-gray-a3 disabled:text-workos-gray-a8 focus-visible:ring-workos-purple-9/50",
+					"bg-white border-workos-gray-7 disabled:bg-workos-gray-a3 disabled:border-workos-gray-a3 disabled:text-workos-gray-a8 focus-visible:ring-workos-purple-9/20",
 			},
 			priority: {
 				danger: "",
