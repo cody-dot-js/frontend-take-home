@@ -49,7 +49,7 @@ const TabsTrigger = forwardRef<
 			"relative flex cursor-pointer items-center gap-1 whitespace-nowrap",
 			"text-workos-gray-a11 px-4 py-2.5 text-sm font-normal",
 			"rounded-tl-lg rounded-tr-lg",
-			"ring-focus-accent outline-none",
+			"ring-workos-purple-9/20 outline-none",
 			"disabled:cursor-default disabled:opacity-50",
 			"focus-visible:ring-4",
 			"not-disabled:hover:font-medium not-disabled:hover:text-workos-gray-12",
@@ -80,7 +80,7 @@ const TabsContent = forwardRef<
 >(({ className, ...props }, ref) => (
 	<TabsPrimitiveContent
 		ref={ref}
-		className={cx("focus-visible:ring-focus-accent outline-none focus-visible:ring-4", className)}
+		className={cx("ring-workos-purple-9/20 rounded outline-none focus-visible:ring-4", className)}
 		{...props}
 	/>
 ));
