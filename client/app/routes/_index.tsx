@@ -1,4 +1,6 @@
+import { Plus } from "@phosphor-icons/react/Plus";
 import type { MetaFunction } from "@remix-run/node";
+import { Button } from "~/components/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/components/tabs";
 
 export const meta: MetaFunction = () => {
@@ -25,7 +27,22 @@ export default function Index() {
 					<TabsTrigger value={$tab("users")}>Users</TabsTrigger>
 					<TabsTrigger value={$tab("roles")}>Roles</TabsTrigger>
 				</TabsList>
-				<TabsContent value={$tab("users")}>Users content</TabsContent>
+				<TabsContent value={$tab("users")}>
+					<p>Users content</p>
+					<Button type="button" appearance="filled" priority="default" size="md">
+						<Plus /> Add User
+					</Button>
+					<Button type="button" appearance="outlined" priority="danger" size="md">
+						Delete User
+					</Button>
+
+					<Button type="button" appearance="outlined" priority="default" size="sm" disabled>
+						Previous
+					</Button>
+					<Button type="button" appearance="outlined" priority="default" size="sm" asChild>
+						<a href="#">Next</a>
+					</Button>
+				</TabsContent>
 				<TabsContent value={$tab("roles")}>Roles content</TabsContent>
 			</Tabs>
 		</main>
