@@ -5,13 +5,13 @@ import { Children, cloneElement, ComponentProps, forwardRef, isValidElement, Rea
 import invariant from "tiny-invariant";
 
 const buttonVariants = cva(
-	"inline-flex font-medium cursor-pointer border items-center justify-center gap-2 whitespace-nowrap",
+	"inline-flex font-medium cursor-pointer border items-center justify-center gap-2 whitespace-nowrap focus:outline-none focus-visible:ring-4 disabled:cursor-default ",
 	{
 		variants: {
 			appearance: {
-				filled: "bg-workos-purple-9 border-workos-purple-a3 text-white",
+				filled: "bg-workos-purple-9 border-workos-purple-a3 text-white focus-visible:ring-workos-purple-9/50",
 				outlined:
-					"bg-white border-workos-gray-7 disabled:bg-workos-gray-a3 disabled:border-workos-gray-a3 disabled:text-workos-gray-a8",
+					"bg-white border-workos-gray-7 disabled:bg-workos-gray-a3 disabled:border-workos-gray-a3 disabled:text-workos-gray-a8 focus-visible:ring-workos-purple-9/50",
 			},
 			priority: {
 				danger: "",
@@ -33,6 +33,13 @@ const buttonVariants = cva(
 			priority: "default",
 			appearance: "outlined",
 		},
+		compoundVariants: [
+			{
+				appearance: "outlined",
+				priority: "danger",
+				class: "border-workos-red-a7 bg-workos-red-surface text-workos-red-a11 focus-visible:ring-workos-red-a7",
+			},
+		],
 	},
 );
 

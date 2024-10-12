@@ -32,6 +32,9 @@ export default function Index() {
 					<Button type="button" appearance="filled" priority="default" size="md">
 						<Plus /> Add User
 					</Button>
+					<Button type="button" appearance="outlined" priority="danger" size="md">
+						Delete User
+					</Button>
 
 					<Button type="button" appearance="outlined" priority="default" size="sm" disabled>
 						Previous
