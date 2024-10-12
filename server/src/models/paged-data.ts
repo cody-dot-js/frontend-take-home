@@ -1,6 +1,6 @@
 export interface PagedData<T> {
-  data: T[];
-  next: number | null;
-  prev: number | null;
-  pages: number;
+	data: T[];
+	next: number | null;
+	prev: number | null;
+	pages: number;
 }

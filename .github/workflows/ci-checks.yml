@@ -1,0 +1,38 @@
+name: CI Checks
+
+on: push
+
+jobs:
+  ci-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+
+      - name: Install pnpm 📦
+        uses: pnpm/action-setup@v4
+        # use version from package.json#packageManager field
+
+      - name: Install Dependencies 📥
+        run: |
+          pnpm install
+
+      - name: Fmt and Type Check 🧹
+        run: |
+          pnpm run typecheck
+          pnpm run lint
+          pnpm run fmt:check
+
+      - name: Test 🧪
+        run: |
+          pnpm run test
+
+      - name: Build 🏗️
+        run: |
+          pnpm run build
