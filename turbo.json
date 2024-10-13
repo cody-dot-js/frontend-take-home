@@ -17,7 +17,7 @@
 		},
 		"serve": {
 			"env": ["SERVER_SPEED", "SERVER_PORT", "VITE_*"],
-			"dependsOn": ["^build"],
+			"dependsOn": ["build", "^build"],
       "outputs": ["public/build/**", "build/**", ".vercel/**", "dist/**"]
 		},
 		"start": {
