@@ -1,5 +1,6 @@
 import { LRUCache } from "lru-cache";
 import { z } from "zod";
+import { $queryParam } from "./query-params";
 
 type ListOptions = {
 	page: number;
@@ -66,9 +67,9 @@ async function fetchUsers(options: ListOptions): Promise<UsersResponse> {
 	const path = "/users";
 	const baseApiUrl = "http://localhost:3002";
 	const url = new URL(path, baseApiUrl);
-	url.searchParams.set("page", options.page?.toString() ?? "1");
+	url.searchParams.set($queryParam("page"), options.page?.toString() ?? "1");
 	if (options.search) {
-		url.searchParams.set("search", options.search);
+		url.searchParams.set($queryParam("search"), options.search);
 	}
 
 	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), { retries: 3, backoff_ms: 1000 });
@@ -183,21 +184,27 @@ const roleSchema = z.object({
 	description: z.string().trim().min(1),
 });
 
+const rolesEndpointSchema = pagedSchema(roleSchema);
+type RolesResponse = z.infer<typeof rolesEndpointSchema>;
+
 export type Role = z.infer<typeof roleSchema>;
 
 /**
  * GET /roles, by page and search query.
  */
-async function fetchRoles(options: ListOptions) {
+async function fetchRoles(options: ListOptions): Promise<RolesResponse> {
+	// TODO(cody): would love to cache this, but ran out of time!
+	// it gets gnarly when caching by page + search and progressively enhancing on renames!
+
 	const path = "/roles";
 	const baseApiUrl = "http://localhost:3002";
 	const url = new URL(path, baseApiUrl);
-	url.searchParams.set("page", options.page?.toString() ?? "1");
+	url.searchParams.set($queryParam("page"), options.page?.toString() ?? "1");
 	if (options.search) {
-		url.searchParams.set("search", options.search);
+		url.searchParams.set($queryParam("search"), options.search);
 	}
 	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), { retries: 3, backoff_ms: 1000 });
-	const data = usersEndpointSchema.parse(jsonData);
+	const data = rolesEndpointSchema.parse(jsonData);
 	return data;
 }
 
