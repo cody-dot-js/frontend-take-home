@@ -2,12 +2,15 @@ import { CircleNotch } from "@phosphor-icons/react/CircleNotch";
 import { DotsThree } from "@phosphor-icons/react/DotsThree";
 import { MagnifyingGlass } from "@phosphor-icons/react/MagnifyingGlass";
 import { Plus } from "@phosphor-icons/react/Plus";
+import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu";
 import type { LoaderFunctionArgs } from "@remix-run/node";
 import {
 	Await,
 	defer,
 	Form,
 	Link,
+	Outlet,
+	redirect,
 	useLoaderData,
 	useNavigation,
 	useSearchParams,
@@ -15,9 +18,11 @@ import {
 } from "@remix-run/react";
 import { fetchUsers } from "~/api";
 import { Button } from "~/components/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "~/components/dropdown-menu";
 import { Input, InputIcon } from "~/components/input";
 import { PrettyDateTime } from "~/components/pretty-date-time";
 import { Skeleton } from "~/components/skeleton";
+import { anchorClassNames } from "~/components/styled-link";
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "~/components/table";
 import { $queryParam, parsePageQueryParam, parseSearchQueryParam } from "~/query-params";
 import type { ElementRef } from "react";
@@ -29,7 +34,12 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
 	const url = new URL(request.url);
-	const page = parsePageQueryParam(url.searchParams.get($queryParam("page")));
+	const pageParam = url.searchParams.get($queryParam("page"));
+	if (!pageParam) {
+		url.searchParams.set($queryParam("page"), "1");
+		throw redirect(url.toString());
+	}
+	const page = parsePageQueryParam(pageParam);
 	const search = parseSearchQueryParam(url.searchParams.get($queryParam("search")));
 
 	return defer({ response: fetchUsers({ page, search }) }, { headers: { "Cache-Control": "public, max-age=60" } });
@@ -64,8 +74,10 @@ export default function Component() {
 					</div>
 				</Form>
 
-				<Button type="button" appearance="filled" priority="default" size="md">
-					<Plus /> Add User
+				<Button asChild type="button" appearance="filled" priority="default" size="md">
+					<Link to={{ pathname: "add", search: searchParams.toString() }}>
+						<Plus /> Add User
+					</Link>
 				</Button>
 			</div>
 			<div className="border-workos-gray-11 overflow-hidden rounded-lg border">
@@ -134,12 +146,29 @@ export default function Component() {
 															<PrettyDateTime value={user.createdAt} />
 														</TableCell>
 														<TableCell className="text-right">
-															<button
-																type="button"
-																className="ring-workos-purple-9/20 hover:bg-workos-gray-a3 inline-flex size-6 items-center justify-center rounded-full focus:outline-none focus-visible:ring-4"
-															>
-																<DotsThree className="size-4" />
-															</button>
+															<DropdownMenu>
+																<DropdownMenuTrigger
+																	className="ring-workos-purple-9/20 hover:bg-workos-gray-a3 inline-flex size-6 items-center justify-center rounded-full focus:outline-none focus-visible:ring-4"
+																	type="button"
+																>
+																	<DotsThree className="size-4" />
+																</DropdownMenuTrigger>
+																<DropdownMenuContent align="end" hideWhenDetached>
+																	<DropdownMenuItem asChild>
+																		<Link to={user.id}>Edit user</Link>
+																	</DropdownMenuItem>
+																	<DropdownMenuItem asChild>
+																		<Link
+																			to={{
+																				pathname: `./${user.id}/delete`,
+																				search: searchParams.toString(),
+																			}}
+																		>
+																			Delete user
+																		</Link>
+																	</DropdownMenuItem>
+																</DropdownMenuContent>
+															</DropdownMenu>
 														</TableCell>
 													</TableRow>
 												))
@@ -185,6 +214,7 @@ export default function Component() {
 					</Suspense>
 				</Table>
 			</div>
+			<Outlet />
 		</div>
 	);
 }
@@ -199,7 +229,12 @@ function AwaitUsersErrorElement() {
 				<TableRow withoutHover>
 					<TableCell colSpan={4} className="space-y-4 py-8 text-center">
 						<p>Sorry, something went wrong and we couldn't load your Workspace's Users 😭</p>
-						<p>Please try again by refreshing the page.</p>
+						<p>
+							Please try again by refreshing the page. If the problem persists,{" "}
+							<a className={anchorClassNames()} href="mailto:support@workos.com">
+								please contact support.
+							</a>
+						</p>
 						<p>
 							<Button asChild type="button" appearance="outlined" priority="neutral" size="sm">
 								<Link to="." reloadDocument>

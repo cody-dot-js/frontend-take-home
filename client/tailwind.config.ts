@@ -50,6 +50,8 @@ export default {
 			boxShadow: {
 				"workos-shadow-1":
 					"0px 1.5px 2px 0px rgba(5, 5, 88, 0.024) inset, 0px 1.5px 2px 0px rgba(0, 0, 0, 0.024) inset",
+				"workos-popover":
+					"0px 1.85px 2.75px 0px #14141a09, 0px 4.69px 6.95px 0px #14141a0E, 0px -6.43px 24px 0px #14141a04, 0px 3.71px 13.2px 0px #14141a0A, 0px 30px 56px 0px #14141a1f",
 			},
 			colors: {
 				workos: {

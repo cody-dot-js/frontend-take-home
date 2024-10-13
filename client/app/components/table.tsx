@@ -5,7 +5,7 @@ import type { ComponentProps, HTMLAttributes, TdHTMLAttributes, ThHTMLAttributes
 const Table = forwardRef<HTMLTableElement, HTMLAttributes<HTMLTableElement>>(({ className, ...props }, ref) => (
 	<table
 		ref={ref}
-		className={cx("relative w-full caption-bottom overflow-auto text-sm text-[#2b333b]", className)}
+		className={cx("text-workos-gray-12 relative w-full caption-bottom overflow-auto text-sm", className)}
 		{...props}
 	/>
 ));
