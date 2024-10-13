@@ -180,3 +180,10 @@ Given more time, this would have been sick to connect together and use as part o
 
 As an aside, I hardcoded the API url (localhost:3002) into the client app (server side remix).
 Instead, it would be nice to flex that via environment variables as well.
+
+#### Dynamic Data Table + Mobile
+
+Last but not least: it would be awesome to integrate something like [TanStack Table](https://tanstack.com/table/latest) to get fun table features like sorting, reordering, hiding/showing columns, etc.
+
+Could also leverage it to render a more "mobile-friendly" view on smaller viewports (likely a list of cards instead of a table).
+Likewise, could have a view toggle that lets users switch between card/grid/list views for "desktop" viewports.
