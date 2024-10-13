@@ -67,12 +67,14 @@ export function ErrorBoundary() {
 					</AlertContent>
 				</Alert>
 				<p>
-					<StyledLink to={{ pathname: "..", search: searchParams.toString() }}>Go back to the users page?</StyledLink>
+					<StyledLink to={{ pathname: "/users", search: searchParams.toString() }}>
+						Go back to the users page?
+					</StyledLink>
 				</p>
 				<footer className="flex items-center justify-end">
 					<DialogClose asChild>
 						<Button type="button" appearance="outlined" priority="neutral" size="md" asChild>
-							<Link to={{ pathname: "..", search: searchParams.toString() }}>Cancel</Link>
+							<Link to={{ pathname: "/users", search: searchParams.toString() }}>Cancel</Link>
 						</Button>
 					</DialogClose>
 				</footer>
@@ -106,7 +108,7 @@ export function ErrorBoundary() {
 			<footer className="flex items-center justify-end">
 				<DialogClose asChild>
 					<Button type="button" appearance="outlined" priority="neutral" size="md" asChild>
-						<Link to={{ pathname: "..", search: searchParams.toString() }}>Cancel</Link>
+						<Link to={{ pathname: "/users", search: searchParams.toString() }}>Cancel</Link>
 					</Button>
 				</DialogClose>
 			</footer>
@@ -155,7 +157,7 @@ export default function Component() {
 							asChild
 							isLoading={navigation.state !== "idle"}
 						>
-							<Link to="..">{navigation.state !== "idle" && <CircleNotch className="animate-spin" />} Cancel</Link>
+							<Link to="/users">{navigation.state !== "idle" && <CircleNotch className="animate-spin" />} Cancel</Link>
 						</Button>
 					</DialogClose>
 					<Button
@@ -185,7 +187,7 @@ function Layout({ children }: PropsWithChildren) {
 			open
 			onOpenChange={() =>
 				navigate({
-					pathname: "..",
+					pathname: "/users",
 					search: searchParams.toString(),
 				})
 			}

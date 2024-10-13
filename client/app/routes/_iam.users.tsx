@@ -48,8 +48,8 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
 export default function Component() {
 	const loaderData = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
-	const searchInputRef = useRef<ElementRef<"input">>(null);
 	const [searchParams] = useSearchParams();
+	const searchInputRef = useRef<ElementRef<"input">>(null);
 	const searchValue = parseSearchQueryParam(searchParams.get($queryParam("search")));
 	const searchFormRef = useRef<ElementRef<"form">>(null);
 
