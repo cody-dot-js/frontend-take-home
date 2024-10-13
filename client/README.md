@@ -170,3 +170,13 @@ The screens in the Figma were built, but the _extra stuff_ wasn't, e.g. add, edi
 Of course, these would be nice to build out too with more time.
 As alluded to above (in the role edit form discussion), there's not too much complexity in these views.
 They are fairly straightforward and just take more time to build.
+
+#### Vercel + .env
+
+I started off the effort by converting the repo into a monorepo with turborepo + pnpm workspaces.
+I also connected my personal Vercel account so that I could get PR preview deploys.
+However, I didn't get the API server hooked up in preview deployments, so it's pretty useless outside of testing 500 responses!
+Given more time, this would have been sick to connect together and use as part of the demo!
+
+As an aside, I hardcoded the API url (localhost:3002) into the client app (server side remix).
+Instead, it would be nice to flex that via environment variables as well.
