@@ -22,7 +22,7 @@ export type PagedData<T> = {
 };
 
 /**
- * USERS API
+ * --- USERS API ---
  */
 
 const userResponseSchema = z.object({
@@ -48,7 +48,21 @@ export type User = z.infer<typeof userSchema>;
 const usersResponseSchema = pagedSchema(userSchema);
 type UsersResponse = z.infer<typeof usersResponseSchema>;
 
+/**
+ * A cache of Users by ID, with a maximum of 100 entries and a 1-minute TTL.
+ */
+const usersByIdLruCache = new LRUCache<string, User>({
+	max: 100,
+	ttl: 1 * 60 * 1000, // 1 minute, in milliseconds
+});
+
+/**
+ * GET /users, by page and search query.
+ */
 async function fetchUsers(options: ListOptions): Promise<UsersResponse> {
+	// TODO(cody): would love to cache this, but ran out of time!
+	// it gets gnarly when caching by page + search and invalidating on delete
+
 	const path = "/users";
 	const baseApiUrl = "http://localhost:3002";
 	const url = new URL(path, baseApiUrl);
@@ -57,7 +71,7 @@ async function fetchUsers(options: ListOptions): Promise<UsersResponse> {
 		url.searchParams.set("search", options.search);
 	}
 
-	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), 3, 1000);
+	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), { retries: 3, backoff_ms: 1000 });
 	const usersEndpointResponse = usersEndpointSchema.parse(jsonData);
 
 	const roleIds = Array.from(new Set(usersEndpointResponse.data.map((user) => user.roleId)));
@@ -69,6 +83,11 @@ async function fetchUsers(options: ListOptions): Promise<UsersResponse> {
 		role: rolesMap.get(user.roleId)?.name ?? "Unknown",
 	}));
 
+	// add each user to the byId cache
+	users.forEach((user) => {
+		usersByIdLruCache.set(user.id, user);
+	});
+
 	const result: UsersResponse = {
 		...usersEndpointResponse,
 		data: users,
@@ -77,10 +96,82 @@ async function fetchUsers(options: ListOptions): Promise<UsersResponse> {
 	return result;
 }
 
-export { fetchUsers };
+/**
+ * GET /user/:id
+ */
+async function fetchUserById(id: string | undefined): Promise<User> {
+	if (!id) {
+		// bad request
+		throw new Response("User ID is required", { status: 400 });
+	}
+
+	// Check the cache first before making a network request.
+	if (usersByIdLruCache.has(id)) {
+		const result = userSchema.safeParse(usersByIdLruCache.get(id));
+		if (result.success) {
+			return result.data;
+		}
+	}
+
+	// If the user is not in the cache, fetch it from the api.
+	const path = `/users/${id}` as const;
+	const baseApiUrl = "http://localhost:3002";
+	const url = new URL(path, baseApiUrl);
+
+	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), {
+		retries: 3,
+		backoff_ms: 1000,
+		shouldNotRetry: (error) => {
+			// Don't retry if the user is not found (404)
+			return error instanceof Response && error.status === 404;
+		},
+	});
+	const userResponse = userResponseSchema.parse(jsonData);
+
+	const role = await fetchRoleById(userResponse.roleId);
+	const user = { ...userResponse, role: role.name };
+
+	// don't forget to cache the result!
+	usersByIdLruCache.set(id, user);
+
+	return user;
+}
 
 /**
- * ROLES API
+ * DELETE /user/:id
+ */
+async function deleteUserById(id: string | undefined): Promise<void> {
+	if (!id) {
+		// bad request
+		throw new Response("User ID is required", { status: 400 });
+	}
+
+	// If the user is not in the cache, fetch it from the api.
+	const path = `/users/${id}` as const;
+	const baseApiUrl = "http://localhost:3002";
+	const url = new URL(path, baseApiUrl);
+
+	try {
+		await retryWithExponentialBackoff(() => fetchJson(url, { method: "DELETE" }), {
+			retries: 3,
+			backoff_ms: 1000,
+			shouldNotRetry: (error) => {
+				// Don't retry if the user is not found (404)
+				return error instanceof Response && error.status === 404;
+			},
+		});
+	} catch (error) {
+		throw error;
+	} finally {
+		// don't forget to delete the result from the cache!
+		usersByIdLruCache.delete(id);
+	}
+}
+
+export { fetchUsers, fetchUserById, deleteUserById, fetchRoles };
+
+/**
+ * --- ROLES API ---
  */
 
 const roleSchema = z.object({
@@ -94,6 +185,9 @@ const roleSchema = z.object({
 
 export type Role = z.infer<typeof roleSchema>;
 
+/**
+ * GET /roles, by page and search query.
+ */
 async function fetchRoles(options: ListOptions) {
 	const path = "/roles";
 	const baseApiUrl = "http://localhost:3002";
@@ -102,15 +196,7 @@ async function fetchRoles(options: ListOptions) {
 	if (options.search) {
 		url.searchParams.set("search", options.search);
 	}
-	const response = await fetch(url);
-	if (!response.ok) {
-		throw new Error("Failed to fetch roles");
-	}
-	const contentType = response.headers.get("content-type");
-	if (!Boolean(contentType?.includes("application/json"))) {
-		throw new Error(`${path} response is not JSON.`);
-	}
-	const jsonData = await response.json();
+	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), { retries: 3, backoff_ms: 1000 });
 	const data = usersEndpointSchema.parse(jsonData);
 	return data;
 }
@@ -123,6 +209,9 @@ const rolesByIdLruCache = new LRUCache<string, Role>({
 	ttl: 1 * 60 * 1000, // 1 minute, in milliseconds
 });
 
+/**
+ * GET /roles/:id
+ */
 async function fetchRoleById(id: string) {
 	// Check the cache first before making a network request.
 	if (rolesByIdLruCache.has(id)) {
@@ -132,12 +221,12 @@ async function fetchRoleById(id: string) {
 		}
 	}
 
-	// If the role is not in the cache, fetch it from the network.
+	// If the role is not in the cache, fetch it from the api.
 	const path = `/roles/${id}` as const;
 	const baseApiUrl = "http://localhost:3002";
 	const url = new URL(path, baseApiUrl);
 
-	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), 3, 1000);
+	const jsonData = await retryWithExponentialBackoff(() => fetchJson(url), { retries: 3, backoff_ms: 1000 });
 	const data = roleSchema.parse(jsonData);
 
 	// don't forget to cache the result!
@@ -146,15 +235,33 @@ async function fetchRoleById(id: string) {
 	return data;
 }
 
+/**
+ * --- PRIVATE HELPERS ---
+ */
+
+/**
+ * Retry an async function (e.g. fetch) with a given number of retries and exponential backoff.
+ * Has an optional shouldNotRetry function that can be used to determine if a specific error should not be retried, e.g. 404 Not Found.
+ */
 async function retryWithExponentialBackoff<T = unknown>(
 	func: () => Promise<T>,
-	retries: number = 1,
-	backoff_ms: number = 1000,
+	options: {
+		retries?: number;
+		backoff_ms?: number;
+		shouldNotRetry?: (error: unknown) => boolean;
+	},
 ): Promise<T> {
+	const { retries = 1, backoff_ms = 1000, shouldNotRetry } = options;
+
 	for (let attempt = 0; attempt < retries; attempt++) {
 		try {
 			return await func(); // Call the provided function
 		} catch (error) {
+			// Check to see if the error should be retried
+			if (shouldNotRetry?.(error)) {
+				throw error; // Rethrow the error if it should not be retried
+			}
+
 			if (attempt < retries - 1) {
 				const waitTime = backoff_ms * 2 ** attempt; // Calculate wait time
 				console.error(`Attempt ${attempt + 1} failed. Retrying in ${waitTime}ms...`);
@@ -167,23 +274,17 @@ async function retryWithExponentialBackoff<T = unknown>(
 	throw new Error("Unreachable code"); // This should never be reached
 }
 
-async function fetchJson(url: URL): Promise<unknown> {
-	const response = await fetch(url);
+/**
+ * Wrapper around fetch that throws a Response when the status code is not 2xx or if the content type is not JSON.
+ */
+async function fetchJson(url: URL, options?: RequestInit): Promise<unknown> {
+	const response = await fetch(url, options);
 	if (!response.ok) {
-		throw new ApiError(response.statusText, response.status);
+		throw response;
 	}
 	const contentType = response.headers.get("content-type");
 	if (!Boolean(contentType?.includes("application/json"))) {
-		throw new ApiError(`${url} response is not JSON.`, 400);
+		throw new Response(`${url} response is not JSON.`, { status: 400 });
 	}
 	return response.json();
-}
-
-export class ApiError extends Error {
-	status: number;
-	constructor(message: string, status: number) {
-		super(message);
-		this.status = status;
-		this.name = "ApiError";
-	}
 }

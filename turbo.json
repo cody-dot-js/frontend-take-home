@@ -4,7 +4,7 @@
 	"tasks": {
 		"build": {
 			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"env": ["VERCEL"],
+			"env": ["VERCEL", "SERVER_PORT", "SERVER_SPEED", "VITE_*"],
 			"dependsOn": ["^build"],
 			"outputs": ["build/**", ".vercel/**", "dist/**"]
 		},
@@ -16,11 +16,13 @@
 			"outputs": ["node_modules/.cache/.eslintcache"]
 		},
 		"serve": {
+			"env": ["SERVER_SPEED", "SERVER_PORT", "VITE_*"],
 			"dependsOn": ["^build"],
       "outputs": ["public/build/**", "build/**", ".vercel/**", "dist/**"]
 		},
 		"start": {
 			"dependsOn": ["^build"],
+			"env": ["SERVER_SPEED", "SERVER_PORT", "VITE_*"],
 			"cache": false,
 			"persistent": true
 		},

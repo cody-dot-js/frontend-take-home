@@ -15,6 +15,9 @@ installGlobals({ nativeFetch: true });
 
 const ABORT_DELAY = 30_000;
 
+// Reject all pending promises from handler functions after 30 seconds
+export const streamTimeout = 30_000;
+
 export default function handleRequest(
 	request: Request,
 	responseStatusCode: number,
