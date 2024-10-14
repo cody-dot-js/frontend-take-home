@@ -171,6 +171,16 @@ Of course, these would be nice to build out too with more time.
 As alluded to above (in the role edit form discussion), there's not too much complexity in these views.
 They are fairly straightforward and just take more time to build.
 
+#### Authentication and Authorization
+
+Additionally, I left out any  authentication (authn) and authorization (authz) management and validation. 
+Authn, likely with a session cookie or jwt token, is important for knowing identity (who the user is) and gating whether someone can enter/view the iam screens.
+Authz with Role-Based Access Control (RBAC), is important because we don't want all users to have elevated permissions.
+Some users will have read-only access while others can mutate specific things.
+This feels like something that user and role management views should include!
+
+These responsibilities span across the application and API. 
+
 #### Vercel + .env
 
 I started off the effort by converting the repo into a monorepo with turborepo + pnpm workspaces.
